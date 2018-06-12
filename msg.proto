@@ -28,10 +28,9 @@ message Msg {
     HTTP_LISTEN = 14;
     HTTP_CLOSE = 15;
     HTTP_REQ = 16;
-    HTTP_RES = 17;
+    HTTP_RES_HEADER = 17;
     HTTP_RES_WRITE = 18;
     HTTP_RES_END = 19;
-    HTTP_RES_HEADER = 20;
   }
   Command command = 1;
 
@@ -42,7 +41,6 @@ message Msg {
   // arguments by their name.
 
   // ERROR
-  string error = 2;
 
   // START
   string start_cwd = 10;
@@ -120,10 +118,12 @@ message Msg {
   string http_req_path = 162;
   bytes http_req_body = 163;
 
-  // HTTP_RES
-  int32 http_res_id = 170;
-  bytes http_res_write_body = 171;
-  int32 http_res_header_code = 172;
-  
-  repeated string http_res_headers = 173;
+  // HTTP_RES_HEADER (TODO: can this be shared with FETCH_RES?)
+  int32 http_res_header_code = 170;
+  // TODO repeated string http_res_header_headers = 171;
+
+  // HTTP_RES_WRITE
+  bytes http_res_write_body = 180;
+
+  // HTTP_RES_END (no fields)
 }

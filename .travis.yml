@@ -1,8 +1,10 @@
+# We use c++ because it seems to be the only way to get ccache.
+# ccache is necessary to rebuild V8 in not unreasonable amounts of time.
 language: c++
 cache:
   ccache: true
   directories:
-   - .cache/
+   - .cache/  # For Parcel.
    - node_modules/
    - $V8WORKER2_OUT_PATH
 env:
@@ -10,7 +12,8 @@ env:
     - V8WORKER2_OUT_PATH=$HOME/v8worker2_out
     - PROTOBUF_ROOT=$HOME/protobuf
 before_install: |
-  # protobuf
+  eval "$(gimme 1.9.2)" # Use a newer version of Go.
+  # Install protobuf
   export PATH=$PROTOBUF_ROOT/bin:$PATH
   if ! [ -x $PROTOBUF_ROOT/bin/protoc ]; then
     rm -rf $PROTOBUF_ROOT
@@ -23,6 +26,7 @@ before_install: |
 install:
  - mkdir -p $GOPATH/src/github.com/ry
  - ln -s `pwd` $GOPATH/src/github.com/ry/deno
+ - go version
  - env
  - go get -d github.com/ry/v8worker2
  - $GOPATH/src/github.com/ry/v8worker2/build.py --use_ccache --out_path $V8WORKER2_OUT_PATH

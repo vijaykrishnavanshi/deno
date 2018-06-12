@@ -59,18 +59,15 @@ test(async function tests_writeFileSync() {
 
 test(async function tests_createHttpServer() {
   const server = createHttpServer((req: Request, res: Response) => {
-    const object = { name: "testdata" };
-    const objectString = JSON.stringify(object);
+    const objectString = JSON.stringify({ name: "testdata" });
     const enc = new TextEncoder();
     const objectData = enc.encode(objectString);
     if (req.path === "/test") {
       res.write(objectString);
-      res.end();
-    }
-    if (req.path === "/test2") {
+    } else if (req.path === "/test2") {
       res.write(objectData);
-      res.end();
     }
+    res.end();
   });
   server.listen(5000);
   let response = await fetch("http://localhost:5000/test");
@@ -79,6 +76,7 @@ test(async function tests_createHttpServer() {
   response = await fetch("http://localhost:5000/test2");
   json = await response.json();
   assertEqual(json.name, "testdata");
+  server.close();
 });
 
 test(function tests_console_assert() {
