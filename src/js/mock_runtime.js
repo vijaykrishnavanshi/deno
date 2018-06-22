@@ -7,7 +7,7 @@ function assert(cond) {
   if (!cond) throw Error("mock_runtime.js assert failed");
 }
 
-global.typedArrayToArrayBuffer = (ta) => {
+global.typedArrayToArrayBuffer = ta => {
   return ta.buffer.slice(ta.byteOffset, ta.byteOffset + ta.byteLength);
 };
 
@@ -74,4 +74,17 @@ global.DoubleSubFails = () => {
 
 global.SnapshotBug = () => {
   assert("1,2,3" === String([1, 2, 3]));
+};
+
+global.ErrorHandling = () => {
+  global.onerror = (message, source, line, col, error) => {
+    assert("Error: xxx" === message);
+    assert("../../js/mock_runtime.js" === source);
+    deno.print(`line ${line} col ${col}`);
+    assert(line === 89);
+    assert(col === 8);
+    assert(error instanceof Error);
+    deno.pub("ErrorHandling", typedArrayToArrayBuffer(new Uint8Array([42])));
+  };
+  throw Error("xxx");
 };
